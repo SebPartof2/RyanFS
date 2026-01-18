@@ -49,9 +49,12 @@ interface VatsimData {
 const RYAN_CID = 1864478;
 
 export const load: PageServerLoad = async ({ fetch }) => {
-	const [streamsResult, vatsimData] = await Promise.all([
+	const [upcomingResult, pastResult, vatsimData] = await Promise.all([
 		db.execute(
 			"SELECT * FROM streams WHERE scheduled_at >= datetime('now') ORDER BY scheduled_at ASC LIMIT 5"
+		),
+		db.execute(
+			"SELECT * FROM streams WHERE scheduled_at < datetime('now') ORDER BY scheduled_at DESC LIMIT 10"
 		),
 		fetch('https://data.vatsim.net/v3/vatsim-data.json')
 			.then((res) => res.json() as Promise<VatsimData>)
@@ -69,7 +72,8 @@ export const load: PageServerLoad = async ({ fetch }) => {
 	}
 
 	return {
-		upcomingStreams: streamsResult.rows as unknown as Stream[],
+		upcomingStreams: upcomingResult.rows as unknown as Stream[],
+		pastStreams: pastResult.rows as unknown as Stream[],
 		vatsim: ryanFlight
 			? {
 					online: true,

@@ -14,6 +14,7 @@ export interface Stream {
 	scheduled_at: string;
 	platform: string;
 	url: string | null;
+	thumbnail: string | null;
 	created_at: string;
 }
 

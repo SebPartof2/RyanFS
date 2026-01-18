@@ -84,6 +84,14 @@ export const POST: RequestHandler = async ({ fetch, request }) => {
 			if (!scheduledStart) continue;
 
 			const videoUrl = `https://www.youtube.com/watch?v=${video.id}`;
+			// Get the best available thumbnail
+			const thumbnails = video.snippet.thumbnails;
+			const thumbnail =
+				thumbnails?.maxres?.url ||
+				thumbnails?.high?.url ||
+				thumbnails?.medium?.url ||
+				thumbnails?.default?.url ||
+				null;
 
 			// Check if stream already exists by URL
 			const existing = await db.execute({
@@ -94,11 +102,12 @@ export const POST: RequestHandler = async ({ fetch, request }) => {
 			if (existing.rows.length > 0) {
 				// Update existing stream
 				await db.execute({
-					sql: 'UPDATE streams SET title = ?, description = ?, scheduled_at = ? WHERE url = ?',
+					sql: 'UPDATE streams SET title = ?, description = ?, scheduled_at = ?, thumbnail = ? WHERE url = ?',
 					args: [
 						video.snippet.title,
 						video.snippet.description?.slice(0, 500) || null,
 						scheduledStart,
+						thumbnail,
 						videoUrl
 					]
 				});
@@ -106,13 +115,14 @@ export const POST: RequestHandler = async ({ fetch, request }) => {
 			} else {
 				// Insert new stream
 				await db.execute({
-					sql: 'INSERT INTO streams (title, description, scheduled_at, platform, url) VALUES (?, ?, ?, ?, ?)',
+					sql: 'INSERT INTO streams (title, description, scheduled_at, platform, url, thumbnail) VALUES (?, ?, ?, ?, ?, ?)',
 					args: [
 						video.snippet.title,
 						video.snippet.description?.slice(0, 500) || null,
 						scheduledStart,
 						'youtube',
-						videoUrl
+						videoUrl,
+						thumbnail
 					]
 				});
 				synced++;
