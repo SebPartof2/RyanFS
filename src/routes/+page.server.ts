@@ -51,10 +51,10 @@ const RYAN_CID = 1864478;
 export const load: PageServerLoad = async ({ fetch }) => {
 	const [upcomingResult, pastResult, vatsimData] = await Promise.all([
 		db.execute(
-			"SELECT * FROM streams WHERE scheduled_at >= datetime('now', '-2 hours') ORDER BY scheduled_at ASC LIMIT 5"
+			"SELECT * FROM streams WHERE datetime(replace(scheduled_at, 'T', ' ')) >= datetime('now', '-2 hours') ORDER BY scheduled_at ASC LIMIT 5"
 		),
 		db.execute(
-			"SELECT * FROM streams WHERE scheduled_at < datetime('now', '-2 hours') ORDER BY scheduled_at DESC LIMIT 10"
+			"SELECT * FROM streams WHERE datetime(replace(scheduled_at, 'T', ' ')) < datetime('now', '-2 hours') ORDER BY scheduled_at DESC LIMIT 10"
 		),
 		fetch('https://data.vatsim.net/v3/vatsim-data.json')
 			.then((res) => res.json() as Promise<VatsimData>)
