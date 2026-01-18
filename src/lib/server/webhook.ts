@@ -38,9 +38,9 @@ export async function sendScheduleWebhook(): Promise<{ success: boolean; error?:
 	}
 
 	try {
-		// Fetch upcoming streams from the database
+		// Fetch upcoming streams from the database (include streams up to 2 hours past start)
 		const result = await db.execute(
-			"SELECT * FROM streams WHERE scheduled_at >= datetime('now') ORDER BY scheduled_at ASC"
+			"SELECT * FROM streams WHERE scheduled_at >= datetime('now', '-2 hours') ORDER BY scheduled_at ASC"
 		);
 
 		const streams: WebhookStream[] = result.rows.map((row) => {
