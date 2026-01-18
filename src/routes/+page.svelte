@@ -1,5 +1,326 @@
 <script lang="ts">
-	import ComingSoon from '$lib/components/ComingSoon.svelte';
+	let { data } = $props();
+
+	function formatDate(dateStr: string): string {
+		const date = new Date(dateStr);
+		return date.toLocaleDateString('en-US', {
+			weekday: 'short',
+			month: 'short',
+			day: 'numeric',
+			hour: 'numeric',
+			minute: '2-digit'
+		});
+	}
 </script>
 
-<ComingSoon title="Welcome to RyanFS" />
+<div class="home">
+	<section class="hero">
+		<h1>Welcome to RyanFS</h1>
+		<p>Flight Simulation Streaming</p>
+	</section>
+
+	{#if data.vatsim}
+		<section class="vatsim-status">
+			<h2>VATSIM Status</h2>
+			{#if data.vatsim.online && 'callsign' in data.vatsim}
+				<div class="flight-status live">
+					<div class="live-badge">LIVE ON VATSIM</div>
+					<div class="flight-info">
+						<span class="callsign">{data.vatsim.callsign}</span>
+						<span class="route">{data.vatsim.departure} → {data.vatsim.arrival}</span>
+					</div>
+					<div class="flight-details">
+						<div class="detail">
+							<span class="detail-value">{data.vatsim.aircraft}</span>
+							<span class="detail-label">Aircraft</span>
+						</div>
+						<div class="detail">
+							<span class="detail-value">{data.vatsim.altitude.toLocaleString()} ft</span>
+							<span class="detail-label">Altitude</span>
+						</div>
+						<div class="detail">
+							<span class="detail-value">{data.vatsim.groundspeed} kts</span>
+							<span class="detail-label">Ground Speed</span>
+						</div>
+					</div>
+				</div>
+			{:else}
+				<div class="flight-status offline">
+					<div class="offline-icon">
+						<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>
+						</svg>
+					</div>
+					<span class="offline-text">Not currently flying on VATSIM</span>
+					<a href="https://stats.vatsim.net/stats/1864478" target="_blank" rel="noopener noreferrer" class="stats-link">
+						View VATSIM Stats
+					</a>
+				</div>
+			{/if}
+		</section>
+	{/if}
+
+	<section class="schedule">
+		<h2>Upcoming Streams</h2>
+		{#if data.upcomingStreams.length === 0}
+			<p class="no-streams">No streams scheduled yet. Check back soon!</p>
+		{:else}
+			<div class="stream-list">
+				{#each data.upcomingStreams as stream (stream.id)}
+					<div class="stream-card">
+						<div class="stream-date">{formatDate(stream.scheduled_at)}</div>
+						<h3>{stream.title}</h3>
+						{#if stream.description}
+							<p>{stream.description}</p>
+						{/if}
+						<div class="stream-meta">
+							<span class="platform">{stream.platform}</span>
+							{#if stream.url}
+								<a href={stream.url} target="_blank" rel="noopener noreferrer">Watch</a>
+							{/if}
+						</div>
+					</div>
+				{/each}
+			</div>
+		{/if}
+	</section>
+</div>
+
+<style>
+	.home {
+		width: 100%;
+		max-width: 900px;
+		display: flex;
+		flex-direction: column;
+		gap: 3rem;
+	}
+
+	.hero {
+		text-align: center;
+		padding: 2rem 0;
+	}
+
+	.hero h1 {
+		font-size: 3rem;
+		color: #fff;
+		margin: 0 0 0.5rem 0;
+	}
+
+	.hero p {
+		font-size: 1.25rem;
+		color: #888;
+		margin: 0;
+	}
+
+	.vatsim-status {
+		text-align: center;
+	}
+
+	.vatsim-status h2 {
+		font-size: 1.5rem;
+		color: #4fc3f7;
+		margin: 0 0 1.5rem 0;
+	}
+
+	.flight-status {
+		background: rgba(0, 0, 0, 0.3);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 8px;
+		padding: 1.5rem;
+	}
+
+	.flight-status.live {
+		border-color: rgba(76, 175, 80, 0.5);
+	}
+
+	.live-badge {
+		display: inline-block;
+		background: #4caf50;
+		color: #fff;
+		font-size: 0.75rem;
+		font-weight: 700;
+		padding: 0.25rem 0.75rem;
+		border-radius: 4px;
+		margin-bottom: 1rem;
+		animation: pulse 2s infinite;
+	}
+
+	@keyframes pulse {
+		0%,
+		100% {
+			opacity: 1;
+		}
+		50% {
+			opacity: 0.7;
+		}
+	}
+
+	.flight-info {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		margin-bottom: 1.25rem;
+	}
+
+	.callsign {
+		font-size: 1.5rem;
+		font-weight: 700;
+		color: #fff;
+	}
+
+	.route {
+		font-size: 1.1rem;
+		color: #4fc3f7;
+	}
+
+	.flight-details {
+		display: flex;
+		justify-content: center;
+		gap: 2rem;
+	}
+
+	.detail {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.detail-value {
+		font-size: 1.1rem;
+		font-weight: 600;
+		color: #fff;
+	}
+
+	.detail-label {
+		font-size: 0.8rem;
+		color: #888;
+		margin-top: 0.25rem;
+	}
+
+	.flight-status.offline {
+		padding: 2rem;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.offline-icon {
+		color: #555;
+	}
+
+	.offline-text {
+		color: #888;
+		font-size: 1rem;
+	}
+
+	.stats-link {
+		color: #4fc3f7;
+		text-decoration: none;
+		font-size: 0.9rem;
+		margin-top: 0.25rem;
+	}
+
+	.stats-link:hover {
+		text-decoration: underline;
+	}
+
+	.schedule h2 {
+		font-size: 1.5rem;
+		color: #4fc3f7;
+		margin: 0 0 1.5rem 0;
+		text-align: center;
+	}
+
+	.no-streams {
+		text-align: center;
+		color: #888;
+		padding: 2rem;
+		background: rgba(0, 0, 0, 0.2);
+		border-radius: 8px;
+	}
+
+	.stream-list {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.stream-card {
+		background: rgba(0, 0, 0, 0.3);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 8px;
+		padding: 1.25rem;
+		transition: border-color 0.2s ease;
+	}
+
+	.stream-card:hover {
+		border-color: rgba(79, 195, 247, 0.3);
+	}
+
+	.stream-date {
+		font-size: 0.85rem;
+		color: #4fc3f7;
+		margin-bottom: 0.5rem;
+	}
+
+	.stream-card h3 {
+		font-size: 1.2rem;
+		color: #fff;
+		margin: 0 0 0.5rem 0;
+	}
+
+	.stream-card p {
+		color: #aaa;
+		font-size: 0.95rem;
+		margin: 0 0 0.75rem 0;
+		line-height: 1.5;
+	}
+
+	.stream-meta {
+		display: flex;
+		gap: 1rem;
+		align-items: center;
+		font-size: 0.9rem;
+	}
+
+	.platform {
+		color: #888;
+		text-transform: capitalize;
+	}
+
+	.stream-meta a {
+		color: #4fc3f7;
+		text-decoration: none;
+	}
+
+	.stream-meta a:hover {
+		text-decoration: underline;
+	}
+
+	@media (max-width: 600px) {
+		.hero h1 {
+			font-size: 2rem;
+		}
+
+		.hero p {
+			font-size: 1rem;
+		}
+
+		.flight-details {
+			gap: 1rem;
+		}
+
+		.callsign {
+			font-size: 1.25rem;
+		}
+
+		.route {
+			font-size: 1rem;
+		}
+
+		.detail-value {
+			font-size: 1rem;
+		}
+	}
+</style>

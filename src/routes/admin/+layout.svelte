@@ -43,6 +43,11 @@
 	.admin-layout {
 		display: flex;
 		min-height: 100vh;
+		width: 100vw;
+		position: fixed;
+		top: 0;
+		left: 0;
+		background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
 	}
 
 	.sidebar {

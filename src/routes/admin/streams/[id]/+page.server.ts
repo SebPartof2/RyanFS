@@ -34,17 +34,20 @@ export const actions: Actions = {
 			return fail(400, { error: 'Schedule date is required' });
 		}
 
+		// Convert local time to UTC for storage
+		const scheduledUtc = new Date(scheduled_at).toISOString();
+
 		try {
 			await db.execute({
 				sql: 'UPDATE streams SET title = ?, description = ?, scheduled_at = ?, platform = ?, url = ? WHERE id = ?',
-				args: [title, description || null, scheduled_at, platform || 'youtube', url || null, params.id]
+				args: [title, description || null, scheduledUtc, platform || 'youtube', url || null, params.id]
 			});
-
-			redirect(303, '/admin/streams');
 		} catch (err) {
 			console.error('Stream update error:', err);
 			return fail(500, { error: 'Failed to update stream' });
 		}
+
+		redirect(303, '/admin/streams');
 	},
 	delete: async ({ params }) => {
 		await db.execute({

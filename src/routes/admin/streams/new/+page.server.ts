@@ -18,16 +18,19 @@ export const actions: Actions = {
 			return fail(400, { error: 'Schedule date is required', title, description, scheduled_at, platform, url });
 		}
 
+		// Convert local time to UTC for storage
+		const scheduledUtc = new Date(scheduled_at).toISOString();
+
 		try {
 			await db.execute({
 				sql: 'INSERT INTO streams (title, description, scheduled_at, platform, url) VALUES (?, ?, ?, ?, ?)',
-				args: [title, description || null, scheduled_at, platform || 'youtube', url || null]
+				args: [title, description || null, scheduledUtc, platform || 'youtube', url || null]
 			});
-
-			redirect(303, '/admin/streams');
 		} catch (error) {
 			console.error('Stream creation error:', error);
 			return fail(500, { error: 'Failed to create stream', title, description, scheduled_at, platform, url });
 		}
+
+		redirect(303, '/admin/streams');
 	}
 };

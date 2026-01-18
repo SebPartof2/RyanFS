@@ -60,6 +60,7 @@
 	<footer>
 		<div class="footer-content">
 			<p>&copy; {new Date().getFullYear()} RyanFS. All rights reserved.</p>
+			<a href="/admin" class="credit-link">Site Created by @SebPartof2</a>
 			<div class="footer-socials">
 				{#each socials as social}
 					<a href={social.href} target="_blank" rel="noopener noreferrer">
@@ -201,6 +202,17 @@
 
 	.footer-socials a:hover {
 		color: #4fc3f7;
+	}
+
+	.credit-link {
+		color: #555;
+		text-decoration: none;
+		font-size: 0.8rem;
+		transition: color 0.2s ease;
+	}
+
+	.credit-link:hover {
+		color: #888;
 	}
 
 	@media (max-width: 900px) {
