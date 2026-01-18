@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { db } from '$lib/server/db';
+import { sendScheduleWebhook } from '$lib/server/webhook';
 import { YOUTUBE_API_KEY, YOUTUBE_CHANNEL_ID } from '$env/static/private';
 
 interface YouTubeLiveBroadcast {
@@ -129,10 +130,14 @@ export const POST: RequestHandler = async ({ fetch, request }) => {
 			}
 		}
 
+		// Send webhook to external VPS
+		const webhookResult = await sendScheduleWebhook();
+
 		return json({
 			message: `Synced ${synced} new streams, updated ${skipped} existing`,
 			synced,
-			updated: skipped
+			updated: skipped,
+			webhook: webhookResult.success ? 'sent' : webhookResult.error
 		});
 	} catch (error) {
 		console.error('Sync error:', error);

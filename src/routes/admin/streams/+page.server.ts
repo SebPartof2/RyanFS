@@ -1,5 +1,6 @@
 import type { PageServerLoad, Actions } from './$types';
 import { db } from '$lib/server/db';
+import { sendScheduleWebhook } from '$lib/server/webhook';
 import type { Stream } from '$lib/types';
 
 export const load: PageServerLoad = async () => {
@@ -18,6 +19,9 @@ export const actions: Actions = {
 			sql: 'DELETE FROM streams WHERE id = ?',
 			args: [id]
 		});
+
+		// Send webhook to update external VPS
+		await sendScheduleWebhook();
 
 		return { success: true };
 	}
