@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
 
 	let { data } = $props();
+	let syncing = $state(false);
+	let syncMessage = $state('');
 
 	function formatDate(dateStr: string): string {
 		return new Date(dateStr).toLocaleDateString('en-US', {
@@ -17,6 +20,29 @@
 	function isPast(dateStr: string): boolean {
 		return new Date(dateStr) < new Date();
 	}
+
+	async function syncFromYouTube() {
+		syncing = true;
+		syncMessage = '';
+		try {
+			const response = await fetch('/api/sync-streams', {
+				method: 'POST',
+				headers: { 'x-admin-sync': 'true' }
+			});
+			const result = await response.json();
+			if (response.ok) {
+				syncMessage = result.message;
+				await invalidateAll();
+			} else {
+				syncMessage = result.error || 'Sync failed';
+			}
+		} catch {
+			syncMessage = 'Failed to sync';
+		} finally {
+			syncing = false;
+			setTimeout(() => (syncMessage = ''), 5000);
+		}
+	}
 </script>
 
 <div class="streams-admin">
@@ -25,8 +51,17 @@
 			<h1>Streams</h1>
 			<p>{data.streams.length} stream{data.streams.length !== 1 ? 's' : ''}</p>
 		</div>
-		<a href="/admin/streams/new" class="btn-primary">+ New Stream</a>
+		<div class="header-actions">
+			<button onclick={syncFromYouTube} class="btn-sync" disabled={syncing}>
+				{syncing ? 'Syncing...' : 'Sync from YouTube'}
+			</button>
+			<a href="/admin/streams/new" class="btn-primary">+ New Stream</a>
+		</div>
 	</div>
+
+	{#if syncMessage}
+		<div class="sync-message">{syncMessage}</div>
+	{/if}
 
 	{#if data.streams.length === 0}
 		<div class="empty">No streams scheduled. Create one to get started!</div>
@@ -83,6 +118,12 @@
 		margin: 0;
 	}
 
+	.header-actions {
+		display: flex;
+		gap: 0.75rem;
+		align-items: center;
+	}
+
 	.btn-primary {
 		display: inline-block;
 		padding: 0.75rem 1.25rem;
@@ -92,10 +133,43 @@
 		border-radius: 6px;
 		font-weight: 600;
 		transition: all 0.2s ease;
+		border: none;
+		cursor: pointer;
 	}
 
 	.btn-primary:hover {
 		transform: translateY(-2px);
+	}
+
+	.btn-sync {
+		padding: 0.75rem 1.25rem;
+		background: rgba(255, 255, 255, 0.1);
+		color: #888;
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		border-radius: 6px;
+		font-size: 0.9rem;
+		cursor: pointer;
+		transition: all 0.2s ease;
+	}
+
+	.btn-sync:hover:not(:disabled) {
+		background: rgba(255, 255, 255, 0.15);
+		color: #fff;
+	}
+
+	.btn-sync:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
+
+	.sync-message {
+		padding: 0.75rem 1rem;
+		background: rgba(76, 175, 80, 0.2);
+		border: 1px solid rgba(76, 175, 80, 0.5);
+		border-radius: 6px;
+		color: #81c784;
+		margin-bottom: 1.5rem;
+		font-size: 0.9rem;
 	}
 
 	.empty {
