@@ -28,6 +28,7 @@
 					<div class="flight-info">
 						<span class="callsign">{data.vatsim.callsign}</span>
 						<span class="route">{data.vatsim.departure} → {data.vatsim.arrival}</span>
+						<span class="route-names">{data.vatsim.departureName} → {data.vatsim.arrivalName}</span>
 					</div>
 					<div class="flight-details">
 						<div class="detail">
@@ -198,6 +199,11 @@
 	.route {
 		font-size: 1.1rem;
 		color: #4fc3f7;
+	}
+
+	.route-names {
+		font-size: 0.85rem;
+		color: #888;
 	}
 
 	.flight-details {
@@ -427,6 +433,10 @@
 
 		.route {
 			font-size: 1rem;
+		}
+
+		.route-names {
+			font-size: 0.75rem;
 		}
 
 		.detail-value {

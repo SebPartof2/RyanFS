@@ -1,5 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
+import { getAirportName } from '$lib/airports';
 import type { Stream } from '$lib/types';
 
 interface VatsimPilot {
@@ -71,6 +72,9 @@ export const load: PageServerLoad = async ({ fetch }) => {
 		console.log('VATSIM: Failed to fetch data');
 	}
 
+	const departureCode = ryanFlight?.flight_plan?.departure ?? '????';
+	const arrivalCode = ryanFlight?.flight_plan?.arrival ?? '????';
+
 	return {
 		upcomingStreams: upcomingResult.rows as unknown as Stream[],
 		pastStreams: pastResult.rows as unknown as Stream[],
@@ -79,8 +83,10 @@ export const load: PageServerLoad = async ({ fetch }) => {
 					online: true,
 					callsign: ryanFlight.callsign,
 					aircraft: ryanFlight.flight_plan?.aircraft_short ?? 'Unknown',
-					departure: ryanFlight.flight_plan?.departure ?? '????',
-					arrival: ryanFlight.flight_plan?.arrival ?? '????',
+					departure: departureCode,
+					departureName: getAirportName(departureCode),
+					arrival: arrivalCode,
+					arrivalName: getAirportName(arrivalCode),
 					altitude: ryanFlight.altitude,
 					groundspeed: ryanFlight.groundspeed
 				}
