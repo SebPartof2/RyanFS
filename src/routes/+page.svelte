@@ -290,8 +290,8 @@
 	}
 
 	.stream-thumbnail {
-		width: 200px;
-		height: 112px;
+		width: 240px;
+		aspect-ratio: 16/9;
 		object-fit: cover;
 		flex-shrink: 0;
 	}
@@ -370,9 +370,9 @@
 
 	.past-thumbnail {
 		width: 100%;
+		aspect-ratio: 16/9;
 		display: block;
 		object-fit: cover;
-		flex-shrink: 0;
 	}
 
 	.past-thumbnail-placeholder {
