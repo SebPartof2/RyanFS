@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+
 	let { data } = $props();
 
 	function formatDate(dateStr: string): string {
@@ -11,6 +13,27 @@
 			minute: '2-digit'
 		});
 	}
+
+	// Slideshow
+	const slideshowImages = data.slideshowImages ?? [];
+	let currentSlide = $state(0);
+
+	onMount(() => {
+		if (slideshowImages.length > 1) {
+			const interval = setInterval(() => {
+				currentSlide = (currentSlide + 1) % slideshowImages.length;
+			}, 5000);
+			return () => clearInterval(interval);
+		}
+	});
+
+	function nextSlide() {
+		currentSlide = (currentSlide + 1) % slideshowImages.length;
+	}
+
+	function prevSlide() {
+		currentSlide = (currentSlide - 1 + slideshowImages.length) % slideshowImages.length;
+	}
 </script>
 
 <div class="home">
@@ -18,6 +41,39 @@
 		<h1>Welcome to RyanFS</h1>
 		<p>Flight Simulation Streaming</p>
 	</section>
+
+	{#if slideshowImages.length > 0}
+		<section class="slideshow">
+			<div class="slideshow-container">
+				{#each slideshowImages as image, i}
+					<div class="slide" class:active={i === currentSlide}>
+						<img src={image} alt="Flight screenshot {i + 1}" />
+					</div>
+				{/each}
+				{#if slideshowImages.length > 1}
+					<button class="slide-btn prev" onclick={prevSlide}>
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M15 18l-6-6 6-6"/>
+						</svg>
+					</button>
+					<button class="slide-btn next" onclick={nextSlide}>
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M9 18l6-6-6-6"/>
+						</svg>
+					</button>
+					<div class="slide-dots">
+						{#each slideshowImages as _, i}
+							<button
+								class="dot"
+								class:active={i === currentSlide}
+								onclick={() => (currentSlide = i)}
+							></button>
+						{/each}
+					</div>
+				{/if}
+			</div>
+		</section>
+	{/if}
 
 	{#if data.vatsim}
 		<section class="vatsim-status">
@@ -157,6 +213,88 @@
 		font-size: 1.25rem;
 		color: #888;
 		margin: 0;
+	}
+
+	.slideshow {
+		width: 100%;
+	}
+
+	.slideshow-container {
+		position: relative;
+		width: 100%;
+		max-width: 900px;
+		margin: 0 auto;
+		border-radius: 12px;
+		overflow: hidden;
+		background: rgba(0, 0, 0, 0.3);
+	}
+
+	.slide {
+		display: none;
+		width: 100%;
+	}
+
+	.slide.active {
+		display: block;
+	}
+
+	.slide img {
+		width: 100%;
+		aspect-ratio: 16/9;
+		object-fit: cover;
+		display: block;
+	}
+
+	.slide-btn {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		background: rgba(0, 0, 0, 0.5);
+		border: none;
+		color: #fff;
+		padding: 0.75rem;
+		cursor: pointer;
+		border-radius: 50%;
+		transition: background 0.2s ease;
+	}
+
+	.slide-btn:hover {
+		background: rgba(0, 0, 0, 0.8);
+	}
+
+	.slide-btn.prev {
+		left: 1rem;
+	}
+
+	.slide-btn.next {
+		right: 1rem;
+	}
+
+	.slide-dots {
+		position: absolute;
+		bottom: 1rem;
+		left: 50%;
+		transform: translateX(-50%);
+		display: flex;
+		gap: 0.5rem;
+	}
+
+	.dot {
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		border: none;
+		background: rgba(255, 255, 255, 0.4);
+		cursor: pointer;
+		transition: background 0.2s ease;
+	}
+
+	.dot:hover {
+		background: rgba(255, 255, 255, 0.7);
+	}
+
+	.dot.active {
+		background: #4fc3f7;
 	}
 
 	.vatsim-status {

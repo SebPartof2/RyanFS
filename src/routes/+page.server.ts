@@ -3,6 +3,13 @@ import { db } from '$lib/server/db';
 import { getAirportName } from '$lib/airports';
 import type { Stream } from '$lib/types';
 
+// Add image filenames here (files should be in static/slideshow/)
+const SLIDESHOW_IMAGES = [
+	'/slideshow/1.png',
+	'/slideshow/2.png',
+	'/slideshow/3.png'
+];
+
 interface VatsimPilot {
 	cid: number;
 	name: string;
@@ -95,6 +102,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
 		upcomingStreams: upcomingResult.rows as unknown as Stream[],
 		pastStreams: pastResult.rows as unknown as Stream[],
 		landingStats,
+		slideshowImages: SLIDESHOW_IMAGES,
 		vatsim: ryanFlight
 			? {
 					online: true,
