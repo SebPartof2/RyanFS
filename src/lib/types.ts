@@ -22,3 +22,16 @@ export interface AllowedAdmin {
 	discord_id: string;
 	added_at: string;
 }
+
+export type LandingType = 'smooth' | 'dent' | 'crater';
+
+export interface FlightLog {
+	id: number;
+	origin: string;
+	destination: string;
+	callsign: string;
+	landing_type: LandingType;
+	notes: string | null;
+	flight_date: string;
+	created_at: string;
+}

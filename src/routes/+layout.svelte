@@ -9,6 +9,7 @@
 		{ href: '/reviews', label: 'Reviews' },
 		{ href: '/about', label: 'About Me' },
 		{ href: '/news', label: 'News' },
+		{ href: '/flights', label: 'Flight Log' },
 		{ href: '/airports', label: 'Airports' },
 		{ href: '/feedback', label: 'Feedback' }
 	];

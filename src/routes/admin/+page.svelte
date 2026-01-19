@@ -15,6 +15,10 @@
 			<h3>Streams</h3>
 			<p>Manage upcoming streams</p>
 		</a>
+		<a href="/admin/flights" class="stat-card">
+			<h3>Flight Log</h3>
+			<p>Log flights and track landings</p>
+		</a>
 	</div>
 </div>
 

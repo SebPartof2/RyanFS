@@ -50,17 +50,30 @@ interface VatsimData {
 const RYAN_CID = 1864478;
 
 export const load: PageServerLoad = async ({ fetch }) => {
-	const [upcomingResult, pastResult, vatsimData] = await Promise.all([
+	const [upcomingResult, pastResult, landingStatsResult, vatsimData] = await Promise.all([
 		db.execute(
 			"SELECT * FROM streams WHERE datetime(replace(scheduled_at, 'T', ' ')) >= datetime('now', '-2 hours') ORDER BY scheduled_at ASC LIMIT 5"
 		),
 		db.execute(
 			"SELECT * FROM streams WHERE datetime(replace(scheduled_at, 'T', ' ')) < datetime('now', '-2 hours') ORDER BY scheduled_at DESC LIMIT 10"
 		),
+		db.execute(
+			"SELECT landing_type, COUNT(*) as count FROM flight_logs GROUP BY landing_type"
+		).catch(() => ({ rows: [] })),
 		fetch('https://data.vatsim.net/v3/vatsim-data.json')
 			.then((res) => res.json() as Promise<VatsimData>)
 			.catch(() => null)
 	]);
+
+	// Process landing stats
+	const landingStats = { smooth: 0, dent: 0, crater: 0 };
+	for (const row of landingStatsResult.rows) {
+		const type = row.landing_type as string;
+		const count = row.count as number;
+		if (type in landingStats) {
+			landingStats[type as keyof typeof landingStats] = count;
+		}
+	}
 
 	const ryanFlight = vatsimData?.pilots.find((p) => p.cid === RYAN_CID) ?? null;
 
@@ -78,6 +91,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
 	return {
 		upcomingStreams: upcomingResult.rows as unknown as Stream[],
 		pastStreams: pastResult.rows as unknown as Stream[],
+		landingStats,
 		vatsim: ryanFlight
 			? {
 					online: true,

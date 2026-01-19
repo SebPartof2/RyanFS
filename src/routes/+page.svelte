@@ -61,6 +61,25 @@
 		</section>
 	{/if}
 
+	<section class="landing-tracker">
+		<h2>Landing Tracker</h2>
+		<div class="landing-stats">
+			<div class="landing-stat smooth">
+				<span class="landing-count">{data.landingStats.smooth}</span>
+				<span class="landing-label">Butter</span>
+			</div>
+			<div class="landing-stat dent">
+				<span class="landing-count">{data.landingStats.dent}</span>
+				<span class="landing-label">Dents</span>
+			</div>
+			<div class="landing-stat crater">
+				<span class="landing-count">{data.landingStats.crater}</span>
+				<span class="landing-label">Craters</span>
+			</div>
+		</div>
+		<a href="/flights" class="view-all-link">View Flight Log</a>
+	</section>
+
 	<section class="schedule">
 		<h2>Upcoming Streams</h2>
 		{#if data.upcomingStreams.length === 0}
@@ -255,6 +274,77 @@
 	}
 
 	.stats-link:hover {
+		text-decoration: underline;
+	}
+
+	.landing-tracker {
+		text-align: center;
+		margin-bottom: 2rem;
+	}
+
+	.landing-tracker h2 {
+		font-size: 1.5rem;
+		color: #4fc3f7;
+		margin: 0 0 1rem 0;
+	}
+
+	.landing-stats {
+		display: flex;
+		justify-content: center;
+		gap: 1.5rem;
+		margin-bottom: 1rem;
+	}
+
+	.landing-stat {
+		background: rgba(0, 0, 0, 0.3);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 8px;
+		padding: 1rem 1.5rem;
+		min-width: 80px;
+	}
+
+	.landing-stat.smooth {
+		border-color: rgba(129, 199, 132, 0.3);
+	}
+
+	.landing-stat.dent {
+		border-color: rgba(255, 183, 77, 0.3);
+	}
+
+	.landing-stat.crater {
+		border-color: rgba(229, 115, 115, 0.3);
+	}
+
+	.landing-count {
+		display: block;
+		font-size: 1.75rem;
+		font-weight: 700;
+	}
+
+	.landing-stat.smooth .landing-count {
+		color: #81c784;
+	}
+
+	.landing-stat.dent .landing-count {
+		color: #ffb74d;
+	}
+
+	.landing-stat.crater .landing-count {
+		color: #e57373;
+	}
+
+	.landing-label {
+		font-size: 0.8rem;
+		color: #888;
+	}
+
+	.view-all-link {
+		color: #4fc3f7;
+		text-decoration: none;
+		font-size: 0.9rem;
+	}
+
+	.view-all-link:hover {
 		text-decoration: underline;
 	}
 
