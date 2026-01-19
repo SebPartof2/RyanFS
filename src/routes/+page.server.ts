@@ -59,7 +59,10 @@ export const load: PageServerLoad = async ({ fetch }) => {
 		),
 		db.execute(
 			"SELECT landing_type, COUNT(*) as count FROM flight_logs GROUP BY landing_type"
-		).catch(() => ({ rows: [] })),
+		).catch((e) => {
+			console.log('Flight logs table may not exist:', e.message);
+			return { rows: [] };
+		}),
 		fetch('https://data.vatsim.net/v3/vatsim-data.json')
 			.then((res) => res.json() as Promise<VatsimData>)
 			.catch(() => null)

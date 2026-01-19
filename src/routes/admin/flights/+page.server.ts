@@ -4,17 +4,22 @@ import { getAirportName } from '$lib/airports';
 import type { FlightLog } from '$lib/types';
 
 export const load: PageServerLoad = async () => {
-	const result = await db.execute(
-		'SELECT * FROM flight_logs ORDER BY flight_date DESC'
-	);
+	try {
+		const result = await db.execute(
+			'SELECT * FROM flight_logs ORDER BY flight_date DESC'
+		);
 
-	const flights = (result.rows as unknown as FlightLog[]).map((flight) => ({
-		...flight,
-		originName: getAirportName(flight.origin),
-		destinationName: getAirportName(flight.destination)
-	}));
+		const flights = (result.rows as unknown as FlightLog[]).map((flight) => ({
+			...flight,
+			originName: getAirportName(flight.origin),
+			destinationName: getAirportName(flight.destination)
+		}));
 
-	return { flights };
+		return { flights };
+	} catch (e) {
+		console.log('Flight logs table may not exist:', e);
+		return { flights: [] };
+	}
 };
 
 export const actions: Actions = {
