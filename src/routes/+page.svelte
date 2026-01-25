@@ -124,6 +124,10 @@
 				<span class="landing-count">{data.landingStats.smooth}</span>
 				<span class="landing-label">Butter</span>
 			</div>
+			<div class="landing-stat solid">
+				<span class="landing-count">{data.landingStats.solid}</span>
+				<span class="landing-label">Solid</span>
+			</div>
 			<div class="landing-stat dent">
 				<span class="landing-count">{data.landingStats.dent}</span>
 				<span class="landing-label">Dents</span>
@@ -445,6 +449,10 @@
 		border-color: rgba(129, 199, 132, 0.3);
 	}
 
+	.landing-stat.solid {
+		border-color: rgba(100, 181, 246, 0.3);
+	}
+
 	.landing-stat.dent {
 		border-color: rgba(255, 183, 77, 0.3);
 	}
@@ -461,6 +469,10 @@
 
 	.landing-stat.smooth .landing-count {
 		color: #81c784;
+	}
+
+	.landing-stat.solid .landing-count {
+		color: #64b5f6;
 	}
 
 	.landing-stat.dent .landing-count {

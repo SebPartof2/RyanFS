@@ -9,7 +9,7 @@ async function initTable() {
 			origin TEXT NOT NULL,
 			destination TEXT NOT NULL,
 			callsign TEXT NOT NULL,
-			landing_type TEXT NOT NULL CHECK(landing_type IN ('smooth', 'dent', 'crater')),
+			landing_type TEXT NOT NULL CHECK(landing_type IN ('smooth', 'solid', 'dent', 'crater')),
 			notes TEXT,
 			flight_date TEXT NOT NULL DEFAULT (datetime('now')),
 			created_at TEXT NOT NULL DEFAULT (datetime('now'))

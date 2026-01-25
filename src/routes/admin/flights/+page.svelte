@@ -16,6 +16,8 @@
 		switch (type) {
 			case 'smooth':
 				return 'Butter';
+			case 'solid':
+				return 'Solid';
 			case 'dent':
 				return 'Dent';
 			case 'crater':
@@ -62,6 +64,7 @@
 					<label for="landing_type">Landing</label>
 					<select id="landing_type" name="landing_type" required>
 						<option value="smooth">Butter</option>
+						<option value="solid">Solid</option>
 						<option value="dent">Dent</option>
 						<option value="crater">Crater</option>
 					</select>
@@ -320,6 +323,11 @@
 	.landing-badge.smooth {
 		background: rgba(129, 199, 132, 0.2);
 		color: #81c784;
+	}
+
+	.landing-badge.solid {
+		background: rgba(100, 181, 246, 0.2);
+		color: #64b5f6;
 	}
 
 	.landing-badge.dent {

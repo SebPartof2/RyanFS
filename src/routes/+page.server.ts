@@ -76,7 +76,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
 	]);
 
 	// Process landing stats
-	const landingStats = { smooth: 0, dent: 0, crater: 0 };
+	const landingStats = { smooth: 0, solid: 0, dent: 0, crater: 0 };
 	for (const row of landingStatsResult.rows) {
 		const type = row.landing_type as string;
 		const count = row.count as number;

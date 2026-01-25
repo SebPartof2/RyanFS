@@ -23,7 +23,7 @@ export interface AllowedAdmin {
 	added_at: string;
 }
 
-export type LandingType = 'smooth' | 'dent' | 'crater';
+export type LandingType = 'smooth' | 'solid' | 'dent' | 'crater';
 
 export interface FlightLog {
 	id: number;

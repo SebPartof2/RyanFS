@@ -27,6 +27,8 @@
 		switch (type) {
 			case 'smooth':
 				return 'Butter';
+			case 'solid':
+				return 'Solid';
 			case 'dent':
 				return 'Dent';
 			case 'crater':
@@ -54,6 +56,10 @@
 			<div class="stat smooth">
 				<span class="stat-value">{data.stats.smooth}</span>
 				<span class="stat-label">Butter</span>
+			</div>
+			<div class="stat solid">
+				<span class="stat-value">{data.stats.solid}</span>
+				<span class="stat-label">Solid</span>
 			</div>
 			<div class="stat dent">
 				<span class="stat-value">{data.stats.dent}</span>
@@ -149,6 +155,11 @@
 		background: rgba(129, 199, 132, 0.1);
 	}
 
+	.stat.solid {
+		border-color: rgba(100, 181, 246, 0.3);
+		background: rgba(100, 181, 246, 0.1);
+	}
+
 	.stat.dent {
 		border-color: rgba(255, 183, 77, 0.3);
 		background: rgba(255, 183, 77, 0.1);
@@ -168,6 +179,10 @@
 
 	.stat.smooth .stat-value {
 		color: #81c784;
+	}
+
+	.stat.solid .stat-value {
+		color: #64b5f6;
 	}
 
 	.stat.dent .stat-value {
@@ -227,6 +242,11 @@
 	.landing-badge.smooth {
 		background: rgba(129, 199, 132, 0.2);
 		color: #81c784;
+	}
+
+	.landing-badge.solid {
+		background: rgba(100, 181, 246, 0.2);
+		color: #64b5f6;
 	}
 
 	.landing-badge.dent {

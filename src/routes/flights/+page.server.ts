@@ -19,6 +19,7 @@ export const load: PageServerLoad = async () => {
 		const stats = {
 			total: flights.length,
 			smooth: flights.filter((f) => f.landing_type === 'smooth').length,
+			solid: flights.filter((f) => f.landing_type === 'solid').length,
 			dent: flights.filter((f) => f.landing_type === 'dent').length,
 			crater: flights.filter((f) => f.landing_type === 'crater').length
 		};
@@ -28,7 +29,7 @@ export const load: PageServerLoad = async () => {
 		console.log('Flight logs table may not exist:', e);
 		return {
 			flights: [],
-			stats: { total: 0, smooth: 0, dent: 0, crater: 0 }
+			stats: { total: 0, smooth: 0, solid: 0, dent: 0, crater: 0 }
 		};
 	}
 };
