@@ -50,5 +50,23 @@ export const actions: Actions = {
 		});
 
 		return { success: true };
+	},
+
+	edit: async ({ request }) => {
+		const formData = await request.formData();
+		const id = formData.get('id') as string;
+		const origin = (formData.get('origin') as string).toUpperCase();
+		const destination = (formData.get('destination') as string).toUpperCase();
+		const callsign = (formData.get('callsign') as string).toUpperCase();
+		const landing_type = formData.get('landing_type') as string;
+		const notes = formData.get('notes') as string || null;
+		const flight_date = formData.get('flight_date') as string;
+
+		await db.execute({
+			sql: 'UPDATE flight_logs SET origin = ?, destination = ?, callsign = ?, landing_type = ?, notes = ?, flight_date = ? WHERE id = ?',
+			args: [origin, destination, callsign, landing_type, notes, flight_date, id]
+		});
+
+		return { success: true };
 	}
 };

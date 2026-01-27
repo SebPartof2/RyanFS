@@ -3,6 +3,8 @@
 
 	let { data } = $props();
 
+	let editingFlight = $state<number | null>(null);
+
 	function formatDate(dateStr: string): string {
 		const date = new Date(dateStr);
 		return date.toLocaleDateString('en-US', {
@@ -10,6 +12,10 @@
 			month: 'short',
 			day: 'numeric'
 		});
+	}
+
+	function formatDateForInput(dateStr: string): string {
+		return dateStr.split('T')[0];
 	}
 
 	function getLandingLabel(type: string): string {
@@ -29,6 +35,14 @@
 
 	function getTodayDate(): string {
 		return new Date().toISOString().split('T')[0];
+	}
+
+	function startEdit(flightId: number) {
+		editingFlight = flightId;
+	}
+
+	function cancelEdit() {
+		editingFlight = null;
 	}
 </script>
 
@@ -100,25 +114,76 @@
 					</thead>
 					<tbody>
 						{#each data.flights as flight}
-							<tr>
-								<td class="date">{formatDate(flight.flight_date)}</td>
-								<td class="callsign">{flight.callsign}</td>
-								<td class="route">
-									<span class="icao">{flight.origin}</span>
-									<span class="arrow">-></span>
-									<span class="icao">{flight.destination}</span>
-								</td>
-								<td>
-									<span class="landing-badge {flight.landing_type}">{getLandingLabel(flight.landing_type)}</span>
-								</td>
-								<td class="notes">{flight.notes || '-'}</td>
-								<td>
-									<form method="POST" action="?/delete" use:enhance class="delete-form">
-										<input type="hidden" name="id" value={flight.id} />
-										<button type="submit" class="delete-btn">Delete</button>
-									</form>
-								</td>
-							</tr>
+							{#if editingFlight === flight.id}
+								<tr class="editing-row">
+									<td colspan="6">
+										<form method="POST" action="?/edit" use:enhance={() => {
+											return async ({ update }) => {
+												await update();
+												editingFlight = null;
+											};
+										}} class="edit-form">
+											<input type="hidden" name="id" value={flight.id} />
+											<div class="edit-fields">
+												<div class="edit-field">
+													<label>Date</label>
+													<input type="date" name="flight_date" value={formatDateForInput(flight.flight_date)} required />
+												</div>
+												<div class="edit-field">
+													<label>Callsign</label>
+													<input type="text" name="callsign" value={flight.callsign} required />
+												</div>
+												<div class="edit-field">
+													<label>Origin</label>
+													<input type="text" name="origin" value={flight.origin} required maxlength="4" />
+												</div>
+												<div class="edit-field">
+													<label>Destination</label>
+													<input type="text" name="destination" value={flight.destination} required maxlength="4" />
+												</div>
+												<div class="edit-field">
+													<label>Landing</label>
+													<select name="landing_type" required>
+														<option value="smooth" selected={flight.landing_type === 'smooth'}>Butter</option>
+														<option value="solid" selected={flight.landing_type === 'solid'}>Solid</option>
+														<option value="dent" selected={flight.landing_type === 'dent'}>Dent</option>
+														<option value="crater" selected={flight.landing_type === 'crater'}>Crater</option>
+													</select>
+												</div>
+												<div class="edit-field notes-field">
+													<label>Notes</label>
+													<input type="text" name="notes" value={flight.notes || ''} placeholder="Optional" />
+												</div>
+											</div>
+											<div class="edit-actions">
+												<button type="submit" class="save-btn">Save</button>
+												<button type="button" class="cancel-btn" onclick={cancelEdit}>Cancel</button>
+											</div>
+										</form>
+									</td>
+								</tr>
+							{:else}
+								<tr>
+									<td class="date">{formatDate(flight.flight_date)}</td>
+									<td class="callsign">{flight.callsign}</td>
+									<td class="route">
+										<span class="icao">{flight.origin}</span>
+										<span class="arrow">-></span>
+										<span class="icao">{flight.destination}</span>
+									</td>
+									<td>
+										<span class="landing-badge {flight.landing_type}">{getLandingLabel(flight.landing_type)}</span>
+									</td>
+									<td class="notes">{flight.notes || '-'}</td>
+									<td class="actions">
+										<button type="button" class="edit-btn" onclick={() => startEdit(flight.id)}>Edit</button>
+										<form method="POST" action="?/delete" use:enhance class="delete-form">
+											<input type="hidden" name="id" value={flight.id} />
+											<button type="submit" class="delete-btn">Delete</button>
+										</form>
+									</td>
+								</tr>
+							{/if}
 						{/each}
 					</tbody>
 				</table>
@@ -357,6 +422,104 @@
 		border-color: #e57373;
 	}
 
+	.actions {
+		display: flex;
+		gap: 0.5rem;
+		align-items: center;
+	}
+
+	.edit-btn {
+		padding: 0.3rem 0.6rem;
+		background: transparent;
+		border: 1px solid rgba(79, 195, 247, 0.3);
+		color: #4fc3f7;
+		border-radius: 4px;
+		font-size: 0.8rem;
+		cursor: pointer;
+		transition: all 0.2s ease;
+	}
+
+	.edit-btn:hover {
+		background: rgba(79, 195, 247, 0.2);
+		border-color: #4fc3f7;
+	}
+
+	.editing-row {
+		background: rgba(79, 195, 247, 0.05);
+	}
+
+	.edit-form {
+		padding: 1rem 0;
+	}
+
+	.edit-fields {
+		display: flex;
+		gap: 1rem;
+		flex-wrap: wrap;
+		margin-bottom: 1rem;
+	}
+
+	.edit-field {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+
+	.edit-field label {
+		font-size: 0.75rem;
+		color: #888;
+		margin: 0;
+	}
+
+	.edit-field input,
+	.edit-field select {
+		padding: 0.4rem 0.6rem;
+		font-size: 0.85rem;
+		min-width: 100px;
+	}
+
+	.edit-field.notes-field {
+		flex: 1;
+		min-width: 150px;
+	}
+
+	.edit-actions {
+		display: flex;
+		gap: 0.5rem;
+	}
+
+	.save-btn {
+		padding: 0.4rem 1rem;
+		background: #4fc3f7;
+		color: #000;
+		border: none;
+		border-radius: 4px;
+		font-size: 0.85rem;
+		font-weight: 600;
+		cursor: pointer;
+		transition: background 0.2s ease;
+	}
+
+	.save-btn:hover {
+		background: #81d4fa;
+	}
+
+	.cancel-btn {
+		padding: 0.4rem 1rem;
+		background: transparent;
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		color: #888;
+		border-radius: 4px;
+		font-size: 0.85rem;
+		cursor: pointer;
+		transition: all 0.2s ease;
+	}
+
+	.cancel-btn:hover {
+		border-color: rgba(255, 255, 255, 0.4);
+		color: #fff;
+	}
+
 	@media (max-width: 768px) {
 		.admin-flights {
 			padding: 1rem;
@@ -378,6 +541,24 @@
 
 		.notes {
 			max-width: 100px;
+		}
+
+		.edit-fields {
+			flex-direction: column;
+		}
+
+		.edit-field {
+			width: 100%;
+		}
+
+		.edit-field input,
+		.edit-field select {
+			width: 100%;
+		}
+
+		.actions {
+			flex-direction: column;
+			gap: 0.25rem;
 		}
 	}
 </style>
