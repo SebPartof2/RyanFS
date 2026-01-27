@@ -5,9 +5,10 @@
 	let { children, data } = $props();
 
 	const navItems = [
-		{ href: '/admin', label: 'Dashboard' },
-		{ href: '/admin/feedback', label: 'Feedback' },
-		{ href: '/admin/streams', label: 'Streams' }
+		{ href: '/admin', label: 'Dashboard', icon: 'dashboard' },
+		{ href: '/admin/streams', label: 'Streams', icon: 'streams' },
+		{ href: '/admin/flights', label: 'Flight Log', icon: 'flights' },
+		{ href: '/admin/feedback', label: 'Feedback', icon: 'feedback' }
 	];
 </script>
 
@@ -20,7 +21,28 @@
 		<nav>
 			{#each navItems as item}
 				<a href={item.href} class:active={$page.url.pathname === item.href}>
-					{item.label}
+					{#if item.icon === 'dashboard'}
+						<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<rect x="3" y="3" width="7" height="7"></rect>
+							<rect x="14" y="3" width="7" height="7"></rect>
+							<rect x="14" y="14" width="7" height="7"></rect>
+							<rect x="3" y="14" width="7" height="7"></rect>
+						</svg>
+					{:else if item.icon === 'streams'}
+						<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<polygon points="23 7 16 12 23 17 23 7"></polygon>
+							<rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+						</svg>
+					{:else if item.icon === 'flights'}
+						<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>
+						</svg>
+					{:else if item.icon === 'feedback'}
+						<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+						</svg>
+					{/if}
+					<span>{item.label}</span>
 				</a>
 			{/each}
 		</nav>
@@ -89,11 +111,18 @@
 	}
 
 	nav a {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
 		padding: 0.75rem 1rem;
 		color: #b0b0b0;
 		text-decoration: none;
 		border-radius: 6px;
 		transition: all 0.2s ease;
+	}
+
+	nav a svg {
+		flex-shrink: 0;
 	}
 
 	nav a:hover {

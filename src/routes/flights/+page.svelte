@@ -37,6 +37,57 @@
 				return type;
 		}
 	}
+
+	const countryNames: Record<string, string> = {
+		US: 'United States',
+		CA: 'Canada',
+		GB: 'United Kingdom',
+		DE: 'Germany',
+		FR: 'France',
+		ES: 'Spain',
+		IT: 'Italy',
+		NL: 'Netherlands',
+		BE: 'Belgium',
+		CH: 'Switzerland',
+		AT: 'Austria',
+		AU: 'Australia',
+		NZ: 'New Zealand',
+		JP: 'Japan',
+		KR: 'South Korea',
+		CN: 'China',
+		IN: 'India',
+		BR: 'Brazil',
+		MX: 'Mexico',
+		AE: 'UAE',
+		SA: 'Saudi Arabia',
+		ZA: 'South Africa',
+		SG: 'Singapore',
+		TH: 'Thailand',
+		MY: 'Malaysia',
+		PH: 'Philippines',
+		ID: 'Indonesia',
+		VN: 'Vietnam',
+		IE: 'Ireland',
+		PT: 'Portugal',
+		PL: 'Poland',
+		SE: 'Sweden',
+		NO: 'Norway',
+		DK: 'Denmark',
+		FI: 'Finland',
+		RU: 'Russia',
+		TR: 'Turkey',
+		GR: 'Greece',
+		EG: 'Egypt',
+		IL: 'Israel',
+		AR: 'Argentina',
+		CL: 'Chile',
+		CO: 'Colombia',
+		PE: 'Peru'
+	};
+
+	function getCountryName(code: string): string {
+		return countryNames[code] || code;
+	}
 </script>
 
 <svelte:head>
@@ -71,11 +122,74 @@
 			</div>
 		</div>
 
+		{#if data.flights.length > 0}
+			<div class="extended-stats">
+				<div class="stats-row">
+					<div class="stat-box">
+						<span class="stat-box-value">{data.uniqueAirports}</span>
+						<span class="stat-box-label">Airports Visited</span>
+					</div>
+					<div class="stat-box">
+						<span class="stat-box-value">{data.uniqueCountries}</span>
+						<span class="stat-box-label">Countries</span>
+					</div>
+				</div>
+
+				<div class="stats-grid">
+					{#if data.topRoutes.length > 0}
+						<div class="stats-card">
+							<h3>Top Routes</h3>
+							<ul class="stats-list">
+								{#each data.topRoutes as route}
+									<li>
+										<span class="route-code">{route.origin} - {route.destination}</span>
+										<span class="route-count">{route.count}x</span>
+									</li>
+								{/each}
+							</ul>
+						</div>
+					{/if}
+
+					{#if data.topAirports.length > 0}
+						<div class="stats-card">
+							<h3>Top Airports</h3>
+							<ul class="stats-list">
+								{#each data.topAirports as airport}
+									<li>
+										<div class="airport-info">
+											<span class="airport-code">{airport.code}</span>
+											<span class="airport-name">{airport.name}</span>
+										</div>
+										<span class="airport-count">{airport.count}x</span>
+									</li>
+								{/each}
+							</ul>
+						</div>
+					{/if}
+
+					{#if data.topCountries.length > 0}
+						<div class="stats-card">
+							<h3>Top Countries</h3>
+							<ul class="stats-list">
+								{#each data.topCountries as country}
+									<li>
+										<span class="country-name">{getCountryName(country.code)}</span>
+										<span class="country-count">{country.count}x</span>
+									</li>
+								{/each}
+							</ul>
+						</div>
+					{/if}
+				</div>
+			</div>
+		{/if}
+
 		{#if data.flights.length === 0}
 			<div class="empty-state">
 				<p>No flights logged yet.</p>
 			</div>
 		{:else}
+			<h2 class="flights-heading">All Flights</h2>
 			<div class="flights-list">
 				{#each data.flights as flight}
 					<div class="flight-card">
@@ -196,6 +310,110 @@
 	.stat-label {
 		font-size: 0.85rem;
 		color: #888;
+	}
+
+	.extended-stats {
+		margin-bottom: 2rem;
+	}
+
+	.stats-row {
+		display: flex;
+		justify-content: center;
+		gap: 2rem;
+		margin-bottom: 1.5rem;
+	}
+
+	.stat-box {
+		text-align: center;
+	}
+
+	.stat-box-value {
+		display: block;
+		font-size: 2.5rem;
+		font-weight: 700;
+		color: #4fc3f7;
+	}
+
+	.stat-box-label {
+		font-size: 0.9rem;
+		color: #888;
+	}
+
+	.stats-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+		gap: 1rem;
+	}
+
+	.stats-card {
+		background: rgba(0, 0, 0, 0.3);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 10px;
+		padding: 1.25rem;
+	}
+
+	.stats-card h3 {
+		font-size: 1rem;
+		color: #4fc3f7;
+		margin: 0 0 1rem 0;
+	}
+
+	.stats-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	.stats-list li {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 0.5rem 0;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+	}
+
+	.stats-list li:last-child {
+		border-bottom: none;
+	}
+
+	.route-code,
+	.airport-code {
+		font-family: monospace;
+		color: #fff;
+		font-weight: 600;
+	}
+
+	.country-name {
+		color: #fff;
+	}
+
+	.airport-info {
+		display: flex;
+		flex-direction: column;
+		gap: 0.15rem;
+	}
+
+	.airport-name {
+		font-size: 0.75rem;
+		color: #888;
+		max-width: 150px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.route-count,
+	.airport-count,
+	.country-count {
+		color: #888;
+		font-size: 0.85rem;
+	}
+
+	.flights-heading {
+		font-size: 1.25rem;
+		color: #4fc3f7;
+		margin: 0 0 1rem 0;
+		text-align: center;
 	}
 
 	.empty-state {

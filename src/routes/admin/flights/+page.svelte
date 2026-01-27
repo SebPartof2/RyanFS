@@ -39,7 +39,6 @@
 <div class="admin-flights">
 	<div class="header">
 		<h1>Flight Log</h1>
-		<a href="/admin" class="back-link">Back to Admin</a>
 	</div>
 
 	<div class="add-form-section">
@@ -152,16 +151,6 @@
 		font-size: 1.25rem;
 		color: #4fc3f7;
 		margin: 0 0 1rem 0;
-	}
-
-	.back-link {
-		color: #4fc3f7;
-		text-decoration: none;
-		font-size: 0.9rem;
-	}
-
-	.back-link:hover {
-		text-decoration: underline;
 	}
 
 	.add-form-section {
