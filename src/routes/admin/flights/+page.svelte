@@ -126,24 +126,24 @@
 											<input type="hidden" name="id" value={flight.id} />
 											<div class="edit-fields">
 												<div class="edit-field">
-													<label>Date</label>
-													<input type="date" name="flight_date" value={formatDateForInput(flight.flight_date)} required />
+													<label for="edit_flight_date_{flight.id}">Date</label>
+													<input type="date" id="edit_flight_date_{flight.id}" name="flight_date" value={formatDateForInput(flight.flight_date)} required />
 												</div>
 												<div class="edit-field">
-													<label>Callsign</label>
-													<input type="text" name="callsign" value={flight.callsign} required />
+													<label for="edit_callsign_{flight.id}">Callsign</label>
+													<input type="text" id="edit_callsign_{flight.id}" name="callsign" value={flight.callsign} required />
 												</div>
 												<div class="edit-field">
-													<label>Origin</label>
-													<input type="text" name="origin" value={flight.origin} required maxlength="4" />
+													<label for="edit_origin_{flight.id}">Origin</label>
+													<input type="text" id="edit_origin_{flight.id}" name="origin" value={flight.origin} required maxlength="4" />
 												</div>
 												<div class="edit-field">
-													<label>Destination</label>
-													<input type="text" name="destination" value={flight.destination} required maxlength="4" />
+													<label for="edit_destination_{flight.id}">Destination</label>
+													<input type="text" id="edit_destination_{flight.id}" name="destination" value={flight.destination} required maxlength="4" />
 												</div>
 												<div class="edit-field">
-													<label>Landing</label>
-													<select name="landing_type" required>
+													<label for="edit_landing_type_{flight.id}">Landing</label>
+													<select id="edit_landing_type_{flight.id}" name="landing_type" required>
 														<option value="smooth" selected={flight.landing_type === 'smooth'}>Butter</option>
 														<option value="solid" selected={flight.landing_type === 'solid'}>Solid</option>
 														<option value="dent" selected={flight.landing_type === 'dent'}>Dent</option>
@@ -151,8 +151,8 @@
 													</select>
 												</div>
 												<div class="edit-field notes-field">
-													<label>Notes</label>
-													<input type="text" name="notes" value={flight.notes || ''} placeholder="Optional" />
+													<label for="edit_notes_{flight.id}">Notes</label>
+													<input type="text" id="edit_notes_{flight.id}" name="notes" value={flight.notes || ''} placeholder="Optional" />
 												</div>
 											</div>
 											<div class="edit-actions">
@@ -307,6 +307,9 @@
 		border: 1px solid rgba(255, 255, 255, 0.1);
 		border-radius: 10px;
 		padding: 1.5rem;
+		display: flex;
+		flex-direction: column;
+		max-height: 60vh;
 	}
 
 	.empty {
@@ -317,6 +320,8 @@
 
 	.flights-table {
 		overflow-x: auto;
+		overflow-y: auto;
+		flex: 1;
 	}
 
 	table {
