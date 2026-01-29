@@ -8,6 +8,7 @@
 		{ href: '/admin', label: 'Dashboard', icon: 'dashboard' },
 		{ href: '/admin/streams', label: 'Streams', icon: 'streams' },
 		{ href: '/admin/flights', label: 'Flight Log', icon: 'flights' },
+		{ href: '/admin/gallery', label: 'Gallery', icon: 'gallery' },
 		{ href: '/admin/feedback', label: 'Feedback', icon: 'feedback' }
 	];
 </script>
@@ -36,6 +37,12 @@
 					{:else if item.icon === 'flights'}
 						<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 							<path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>
+						</svg>
+					{:else if item.icon === 'gallery'}
+						<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+							<circle cx="8.5" cy="8.5" r="1.5"></circle>
+							<polyline points="21 15 16 10 5 21"></polyline>
 						</svg>
 					{:else if item.icon === 'feedback'}
 						<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

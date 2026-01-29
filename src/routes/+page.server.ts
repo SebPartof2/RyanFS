@@ -1,10 +1,11 @@
 import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
 import { getAirportName } from '$lib/airports';
+import { listR2Images } from '$lib/server/r2';
 import type { Stream } from '$lib/types';
 
-// Add image filenames here (files should be in static/slideshow/)
-const SLIDESHOW_IMAGES = [
+// Fallback images if Drive is not configured
+const FALLBACK_IMAGES = [
 	'/slideshow/1.png',
 	'/slideshow/2.png',
 	'/slideshow/3.png'
@@ -57,7 +58,7 @@ interface VatsimData {
 const RYAN_CID = 1864478;
 
 export const load: PageServerLoad = async ({ fetch }) => {
-	const [upcomingResult, pastResult, landingStatsResult, vatsimData] = await Promise.all([
+	const [upcomingResult, pastResult, landingStatsResult, vatsimData, r2Images] = await Promise.all([
 		db.execute(
 			"SELECT * FROM streams WHERE datetime(replace(scheduled_at, 'T', ' ')) >= datetime('now', '-2 hours') ORDER BY scheduled_at ASC LIMIT 5"
 		),
@@ -72,7 +73,8 @@ export const load: PageServerLoad = async ({ fetch }) => {
 		}),
 		fetch('https://data.vatsim.net/v3/vatsim-data.json')
 			.then((res) => res.json() as Promise<VatsimData>)
-			.catch(() => null)
+			.catch(() => null),
+		listR2Images().catch(() => [])
 	]);
 
 	// Process landing stats
@@ -98,11 +100,16 @@ export const load: PageServerLoad = async ({ fetch }) => {
 	const departureCode = ryanFlight?.flight_plan?.departure ?? '????';
 	const arrivalCode = ryanFlight?.flight_plan?.arrival ?? '????';
 
+	// Use R2 images for slideshow, fallback to static images
+	const slideshowImages = r2Images.length > 0
+		? r2Images.slice(0, 10).map((img) => img.url)
+		: FALLBACK_IMAGES;
+
 	return {
 		upcomingStreams: upcomingResult.rows as unknown as Stream[],
 		pastStreams: pastResult.rows as unknown as Stream[],
 		landingStats,
-		slideshowImages: SLIDESHOW_IMAGES,
+		slideshowImages,
 		vatsim: ryanFlight
 			? {
 					online: true,
